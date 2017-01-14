@@ -18,13 +18,10 @@ also random.
 
 This game is far from finished...
 
-## Future work
+## TODOs
 
 * Implement the rest of the bot's commands
+* Make it possible to configure init-values via command line args.
 * Add a high-score based on the sum of the
   cell-wise diff between the original world and the current world
   upon graceful exit. So more cells edited gives a higher score.
-* Make more TODOs so it looks like the game is far from finished.
-* Add the TODOs from the previous point to this list.
-* Do all the TODOs in this list.
-* Remove the TODOs that have been done.
