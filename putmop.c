@@ -50,7 +50,7 @@
 /* Bot specific constants */
 #define NUMBER_OF_BOTS 5
 #define PROGRAM_INIT_SIZE 5
-#define NUMBER_OF_BOT_COMMANDS 16
+#define NUMBER_OF_BOT_COMMANDS 14
 #define BOT_POS 0
 #define BOT_CELL_VAL 1
 #define BOT_FLAG_VAL 2
@@ -92,6 +92,7 @@ void make_inits_values(CELLVALUE *init_values, int *sizes) {
     init_values[IF_TEST_KEY] = '?';
     init_values[WIN_FLAG] = 1;
     init_values[PLAYER_SYMBOL] = '@';
+    init_values[BOT_PROGRAM_END] = 0;
 }
 
 /* Returns a random positive integer smaller than n */
@@ -345,19 +346,30 @@ void execute_bot_step(int i, CELLVALUE *world)
         world[bpos + BOT_POS] -= world[world[world[POS_POS] + MOVE_LENGTH]];
     else if (com == world[world[world[POS_POS] + PUT_CELL_VAL_KEY]])
     {
-        //TODO
+        world[bpos + BOT_CELL_VAL] =  world[world[bpos + BOT_POS]];
+        world[bpos + BOT_FLAG_VAL] = 0;
     }
     else if (com == world[world[world[POS_POS] + PUT_CELL_POINTER_KEY]])
     {
-        //TODO
+        world[bpos + BOT_CELL_VAL] =  world[world[bpos + BOT_POS]];
+        world[bpos + BOT_FLAG_VAL] = 1;
     }
     else if (com == world[world[world[POS_POS] + PUT_VAL_KEY]])
     {
-        //TODO
+        if (world[bpos + BOT_FLAG_VAL])
+            world[world[bpos + BOT_POS]] = world[world[bpos + BOT_CELL_VAL]];
+        else
+            world[world[bpos + BOT_POS]] = world[bpos + BOT_CELL_VAL];
     } 
-    else if (com == world[world[world[POS_POS] + UPDATE_CELL_KEY]]) {
-        //TODO
-    } else if (com == world[world[world[POS_POS] + BOT_PROGRAM_END]]) {
+    else if (com == world[world[world[POS_POS] + UPDATE_CELL_KEY]])
+    {
+        if (world[bpos + BOT_FLAG_VAL])
+            world[world[bpos + BOT_CELL_VAL]] = world[world[bpos + BOT_POS]];
+        else
+            world[world[bpos + BOT_CELL_VAL]] = world[bpos + BOT_POS];
+    }
+    else if (com == world[world[world[POS_POS] + BOT_PROGRAM_END]])
+    {
         world[bpos + BOT_PROGRAM_COUNTER] = -1;
     }
     world[bpos + BOT_PROGRAM_COUNTER]++;
