@@ -133,8 +133,7 @@ int main()
     draw_map(map_win, world, world_size);
     draw_bottom_bar(bottom_bar, world);
 
-    while (true)
-    {
+    while (true) {
         eval_input(getch(), world);
         execute_bot_steps(world);
         world[world[world[POS_POS] + PLAYER_VALUE]] = world[world[world[world[0] + PLAYER_POS]]];
@@ -171,32 +170,23 @@ void execute_bot_step(int i, CELLVALUE *world)
         world[bpos + BOT_POS] += world[world[world[POS_POS] + MOVE_LENGTH]]*world[MAX_X];
     else if (com == world[world[world[POS_POS] + MOVE_LEFT_KEY]])
         world[bpos + BOT_POS] -= world[world[world[POS_POS] + MOVE_LENGTH]];
-    else if (com == world[world[world[POS_POS] + PUT_CELL_VAL_KEY]])
-    {
+    else if (com == world[world[world[POS_POS] + PUT_CELL_VAL_KEY]]) {
         world[bpos + BOT_CELL_VAL] =  world[world[bpos + BOT_POS]];
         world[bpos + BOT_FLAG_VAL] = 0;
-    }
-    else if (com == world[world[world[POS_POS] + PUT_CELL_POINTER_KEY]])
-    {
+    } else if (com == world[world[world[POS_POS] + PUT_CELL_POINTER_KEY]]) {
         world[bpos + BOT_CELL_VAL] =  world[world[bpos + BOT_POS]];
         world[bpos + BOT_FLAG_VAL] = 1;
-    }
-    else if (com == world[world[world[POS_POS] + PUT_VAL_KEY]])
-    {
+    } else if (com == world[world[world[POS_POS] + PUT_VAL_KEY]]) {
         if (world[bpos + BOT_FLAG_VAL])
             world[world[bpos + BOT_POS]] = world[world[bpos + BOT_CELL_VAL]];
         else
             world[world[bpos + BOT_POS]] = world[bpos + BOT_CELL_VAL];
-    } 
-    else if (com == world[world[world[POS_POS] + UPDATE_CELL_KEY]])
-    {
+    } else if (com == world[world[world[POS_POS] + UPDATE_CELL_KEY]]) {
         if (world[bpos + BOT_FLAG_VAL])
             world[world[bpos + BOT_CELL_VAL]] = world[world[bpos + BOT_POS]];
         else
             world[world[bpos + BOT_CELL_VAL]] = world[bpos + BOT_POS];
-    }
-    else if (com == world[world[world[POS_POS] + BOT_PROGRAM_END]])
-    {
+    } else if (com == world[world[world[POS_POS] + BOT_PROGRAM_END]]) {
         world[bpos + BOT_PROGRAM_COUNTER] = -1;
     }
     world[bpos + BOT_PROGRAM_COUNTER]++;
@@ -205,8 +195,7 @@ void execute_bot_step(int i, CELLVALUE *world)
 /* Execute one step for all bots */
 void execute_bot_steps(CELLVALUE *world)
 {
-    int i;
-    for (i = 0; i < NUMBER_OF_BOTS; i++)
+    for (int i = 0; i < NUMBER_OF_BOTS; i++)
         execute_bot_step(i, world);
 }
 
@@ -220,36 +209,39 @@ void eval_input(char ch, CELLVALUE *world)
         world[world[world[POS_POS] + PLAYER_POS]] += world[world[world[POS_POS] + MOVE_LENGTH]]*world[MAX_X];
     else if (ch == world[world[world[POS_POS] + MOVE_LEFT_KEY]])
         world[world[world[POS_POS] + PLAYER_POS]] -= world[world[world[POS_POS] + MOVE_LENGTH]];
-    else if (ch == world[world[world[POS_POS] + PUT_CELL_VAL_KEY]])
-    {
+    else if (ch == world[world[world[POS_POS] + PUT_CELL_VAL_KEY]]) {
+
         char *strint = get_input(ch);
         CELLVALUE val = strtoll(strint, NULL, 0);
         free(strint);
         world[world[world[POS_POS] + PLAYER_CELLS]+val] =  world[world[world[world[POS_POS] + PLAYER_POS]]];
         world[world[world[POS_POS] + IS_POINTER]+val] = 0;
-    }
-    else if (ch == world[world[world[POS_POS] + PUT_CELL_POINTER_KEY]])
-    {
+
+    } else if (ch == world[world[world[POS_POS] + PUT_CELL_POINTER_KEY]]) {
+
         char *strint = get_input(ch);
         CELLVALUE val = strtoll(strint, NULL, 0);
         free(strint);
         world[world[world[POS_POS] + PLAYER_CELLS]+val] = world[world[world[POS_POS] + PLAYER_POS]];
         world[world[world[POS_POS] + IS_POINTER]+val] = 1;
-    }
-    else if (ch == world[world[world[POS_POS] + PUT_VAL_KEY]])
-    {
+
+    } else if (ch == world[world[world[POS_POS] + PUT_VAL_KEY]]) {
+
         char *strint = get_input(ch);
         CELLVALUE val = strtoll(strint, NULL, 0);
         free(strint);
         world[world[world[world[POS_POS] + PLAYER_POS]]] = val;
-    } 
-    else if (ch == world[world[world[POS_POS] + UPDATE_CELL_KEY]]) {
+
+    } else if (ch == world[world[world[POS_POS] + UPDATE_CELL_KEY]]) {
+
         char *strint = get_input(ch);
         CELLVALUE cell = strtoll(strint, NULL, 0);
         free(strint);
+
         char *strval = get_input(ch);
         CELLVALUE val = strtoll(strval, NULL, 0);
         free(strval);
+
         if (world[world[world[POS_POS] + IS_POINTER] + cell])
             world[world[world[world[POS_POS] + PLAYER_CELLS] + cell]] = val;
         else
@@ -263,8 +255,7 @@ void eval_input(char ch, CELLVALUE *world)
  */
 void make_inits_values(CELLVALUE *init_values, int *sizes) {
 
-    int i;
-    for (i = 0; i < INHABITED_CELLS; i++)
+    for (int i = 0; i < INHABITED_CELLS; i++)
         sizes[i] = 1;
 
     sizes[PLAYER_CELLS] = MAX_PLAYER_CELLS;
@@ -272,7 +263,7 @@ void make_inits_values(CELLVALUE *init_values, int *sizes) {
     sizes[POSITIONS] = INHABITED_CELLS;
 
     // Init bots' sizes, which are at the end of sizes
-    for (i = 1; i <= NUMBER_OF_BOTS; i++)
+    for (int i = 1; i <= NUMBER_OF_BOTS; i++)
         sizes[INHABITED_CELLS-i] = BOT_SIZE + PROGRAM_INIT_SIZE;
 
     init_values[MOVE_LENGTH] = 1;
@@ -307,10 +298,9 @@ static int rand_int(int n)
 /* Simple Fisher-Yates shuffle of an array */
 static void shuffle(int *array, int n)
 {
-    int i, j, tmp;
+    int j, tmp;
 
-    for (i = n - 1; i > 0; i--)
-    {
+    for (int i = n - 1; i > 0; i--) {
         j = rand_int(i + 1);
         tmp = array[j];
         array[j] = array[i];
@@ -324,8 +314,7 @@ int *get_randomized_cell_types_order()
 
     int *arr = malloc(INHABITED_CELLS * sizeof(int));
 
-    int i;
-    for (i = 0; i < INHABITED_CELLS; i++)
+    for (int i = 0; i < INHABITED_CELLS; i++)
         arr[i] = i;
 
     shuffle(arr, INHABITED_CELLS);
@@ -340,14 +329,13 @@ int make_random_bot_command()
 /* Initializes bots with random positions and programs */
 void init_bots(int world_size, int pos, CELLVALUE *world)
 {
-    int i;
-    for (i=0; i < NUMBER_OF_BOTS; i++)
-    {
+    for (int i = 0; i < NUMBER_OF_BOTS; i++) {
+
         int bpos = world[pos+BOTS+i];
         world[bpos+BOT_POS] = rand_int(world_size); 
         world[bpos+BOT_PROGRAM_COUNTER] = 0;
-        int j;
-        for (j = 0; j < PROGRAM_INIT_SIZE-2; j++)
+
+        for (int j = 0; j < PROGRAM_INIT_SIZE-2; j++)
             world[bpos+BOT_PROGRAM+j] = world[world[pos+make_random_bot_command()]];
         
         // Ensure that an if-test does not skip last goto
@@ -378,8 +366,9 @@ void init_world(int world_size, int world_win_max_y, int world_win_max_x, CELLVA
 
     int i = 0;
     int pos = NUM_META_DATA;
-    while (i < INHABITED_CELLS)
-    {
+
+    while (i < INHABITED_CELLS) {
+
         pos += rand_int(world_size - (1 + pos + rest_size));
         positions[order[i]] = pos;
         world[pos] = init_values[order[i]];
@@ -388,8 +377,7 @@ void init_world(int world_size, int world_win_max_y, int world_win_max_x, CELLVA
         i++;
     }
 
-    int k;
-    for (k = 0; k < INHABITED_CELLS; k++)
+    for (int k = 0; k < INHABITED_CELLS; k++)
         world[positions[POSITIONS]+k] = positions[k];
 
     init_bots(world_size, positions[POSITIONS], world);
@@ -403,8 +391,7 @@ char make_char(CELLVALUE val)
 {
     if (val == 0)
         return '.';
-    else 
-    {
+    else {
         char c = (char) (33 + abs(val % 92)); // c should now be printable ASCII char
 
         // c should not be 46='.' nor 64='@'
@@ -426,23 +413,24 @@ void draw_map(WINDOW *win, CELLVALUE *world, int world_size)
     (void) row; // Unused variable needed for above macro
     wmove(win, 1, 1);
 
-    while (i < world_size)
-    {
+    while (i < world_size) {
         if (i == world[world[world[0] + PLAYER_POS]])
             waddch(win, world[world[world[0] + PLAYER_SYMBOL]]);
         else
             waddch(win, make_char(world[i]));
+
         i++;
         if (i % (col-2) == 0)
             wmove(win, (i / (col-2))+1, 1);
     }
-    for (i = 0; i < NUMBER_OF_BOTS; i++)
-    {
+
+    for (i = 0; i < NUMBER_OF_BOTS; i++) {
         int bpos = world[world[world[0]+INHABITED_CELLS-i]+BOT_POS];
         int by = bpos / (col-2);
         int bx = bpos - (by*(col-2));
         mvwaddch(win, 1+by, 1+bx, world[world[world[0]+PLAYER_SYMBOL]]);
     }
+
     box(win, 0, 0);
     wrefresh(win);
 }
@@ -458,24 +446,26 @@ void draw_bottom_bar(WINDOW *win, CELLVALUE *world)
     int curow = 0;
 
     CELLVALUE val;
-    int i;
-    for (i = 0; i < MAX_PLAYER_CELLS; i++) 
-    {
+
+    for (int i = 0; i < MAX_PLAYER_CELLS; i++) {
 
         if ((d += 22) > col) {
             wmove(win, ++curow, 0);
             d = 0;
         }
+
         if (world[world[world[0] + IS_POINTER]+i] == 1) 
             val = world[world[world[world[0] + PLAYER_CELLS]+i]]; 
         else
             val = world[world[world[0] + PLAYER_CELLS]+i];
+
         wprintw(win, "%22d", val);
     }
 
     int k, j;
     getyx(win, j, k);
     (void) j; // Unused variable needed for above macro
+
     while (k++ < col-1) waddch(win, ' ');
     wrefresh(win);
 }
@@ -485,13 +475,11 @@ void clear_area(int fromY, int toY, int fromX, int toX)
     move(fromY, fromX);
     int curX = fromX, curY = fromY;
 
-    while (curY <= toY)
-    {
+    while (curY <= toY) {
         addch(' ');
         curX++;
 
-        if (curX == toX)
-        {
+        if (curX == toX) {
             curX = 0;
             curY++;
             move(curY, 0);
