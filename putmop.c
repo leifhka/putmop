@@ -29,34 +29,37 @@
 #define PUT_CELL_VAL_KEY 12
 #define PUT_FROM_CELL_KEY 13
 #define IF_TEST_KEY 14
-#define BOT_PROGRAM_END 15
-#define PLAYER_POS 16
-#define PLAYER_POS_PTR 17
-#define PLAYER_CELLS 18
-#define PLAYER_VALUE 19
-#define WORLD_SIZE 20
-#define MOVE_LENGTH 21
-#define WIN_FLAG 22
-#define RESTART_GAME 23
-#define SEED 24
-#define IS_POINTER 25
-#define POSITIONS 26
-#define PLAYER_SYMBOL 27
-#define BOTS 28
+#define ELSE_TEST_KEY 15
+#define IF_END_KEY 16
+#define BOT_PROGRAM_END 17
+#define PLAYER_POS 18
+#define PLAYER_POS_PTR 19
+#define PLAYER_CELLS 20
+#define PLAYER_VALUE 21
+#define WORLD_SIZE 22
+#define MOVE_LENGTH 23
+#define WIN_FLAG 24
+#define RESTART_GAME 25
+#define SEED 26
+#define IS_POINTER 27
+#define POSITIONS 28
+#define PLAYER_SYMBOL 29
+#define BOTS 30
 
 /* Number of inhabited cells, that is, number of cell types */
-#define INHABITED_CELLS (28 + NUMBER_OF_BOTS)
+#define INHABITED_CELLS (30 + NUMBER_OF_BOTS)
 
 /* Bot specific constants */
 #define NUMBER_OF_BOTS 5
 #define PROGRAM_INIT_SIZE 5
-#define NUMBER_OF_BOT_COMMANDS 14
+#define NUMBER_OF_BOT_COMMANDS 16
 #define BOT_POS 0
 #define BOT_CELL_VAL 1
 #define BOT_FLAG_VAL 2
-#define BOT_PROGRAM_COUNTER 3
-#define BOT_PROGRAM 4
-#define BOT_SIZE 5
+#define BOT_BOOL 3
+#define BOT_PROGRAM_COUNTER 4
+#define BOT_PROGRAM 5
+#define BOT_SIZE 6
 /* Bot defaults to userinput 0 for all commands needing an input value */
 
 /* Type for cells in world. Must be large enough to contain a normal C-pointer. */
@@ -87,6 +90,8 @@ int make_random_bot_command();
 
 void init_bots(int world_size, int pos, CELLVALUE *world);
 
+void init_test_bots(int world_size, int pos, CELLVALUE *world);
+
 void init_world(int world_size, int world_win_max_y, int world_win_max_x, CELLVALUE *world);
 
 char make_char(CELLVALUE val);
@@ -98,6 +103,8 @@ void draw_bottom_bar(WINDOW *win, CELLVALUE *world);
 void clear_area(int fromY, int toY, int fromX, int toX);
 
 char *get_input(char key);
+
+void skip_bot_if(int bpos, CELLVALUE* world);
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 /*~~~~~~IMPLEMENTATION~~~~~~*/
@@ -186,9 +193,16 @@ void execute_bot_step(int i, CELLVALUE *world)
             world[world[bpos + BOT_CELL_VAL]] = world[world[bpos + BOT_POS]];
         else
             world[world[bpos + BOT_CELL_VAL]] = world[bpos + BOT_POS];
+    } else if (com == world[world[world[POS_POS] + IF_TEST_KEY]]) {
+        if (!world[world[bpos + BOT_BOOL]])
+            skip_bot_if(bpos, world);
+    } else if (com == world[world[world[POS_POS] + ELSE_TEST_KEY]]) {
+        if (world[world[bpos + BOT_BOOL]])
+            skip_bot_if(bpos, world);
     } else if (com == world[world[world[POS_POS] + BOT_PROGRAM_END]]) {
         world[bpos + BOT_PROGRAM_COUNTER] = -1;
     }
+
     world[bpos + BOT_PROGRAM_COUNTER]++;
 }
 
@@ -197,6 +211,17 @@ void execute_bot_steps(CELLVALUE *world)
 {
     for (int i = 0; i < NUMBER_OF_BOTS; i++)
         execute_bot_step(i, world);
+}
+
+/* Skips the program counter of bot until if-block/else-block ends */
+void skip_bot_if(int bpos, CELLVALUE *world)
+{
+    int c = bpos + BOT_PROGRAM + world[bpos+BOT_PROGRAM_COUNTER];
+
+    while (world[c] != BOT_PROGRAM_END &&
+           world[c] != ELSE_TEST_KEY && 
+           world[c] != IF_END_KEY)
+        world[bpos + BOT_PROGRAM_COUNTER]++;
 }
 
 void eval_input(char ch, CELLVALUE *world)
@@ -276,6 +301,7 @@ void make_inits_values(CELLVALUE *init_values, int *sizes) {
     init_values[PUT_CELL_POINTER_KEY] = 'C';
     init_values[UPDATE_CELL_KEY] = 'e';
     init_values[IF_TEST_KEY] = '?';
+    init_values[ELSE_TEST_KEY] = ':';
     init_values[WIN_FLAG] = 1;
     init_values[PLAYER_SYMBOL] = '@';
     init_values[BOT_PROGRAM_END] = 0;
@@ -338,14 +364,25 @@ void init_bots(int world_size, int pos, CELLVALUE *world)
         for (int j = 0; j < PROGRAM_INIT_SIZE-2; j++)
             world[bpos+BOT_PROGRAM+j] = world[world[pos+make_random_bot_command()]];
         
-        // Ensure that an if-test does not skip last goto
-        while (world[bpos+BOT_PROGRAM+PROGRAM_INIT_SIZE-2] == world[world[pos+IF_TEST_KEY]])
-            world[bpos+BOT_PROGRAM+PROGRAM_INIT_SIZE-2] = world[world[pos+make_random_bot_command()]];
-
         world[bpos+BOT_PROGRAM+PROGRAM_INIT_SIZE-1] = world[world[pos+BOT_PROGRAM_END]];
     }
 }
 
+/* Hard-coded bot for testing */
+void init_test_bots(int world_size, int pos, CELLVALUE *world)
+{
+    for (int i = 0; i < NUMBER_OF_BOTS; i++) {
+
+        int bpos = world[pos+BOTS+i];
+        world[bpos+BOT_POS] = 50;
+        world[bpos+BOT_PROGRAM_COUNTER] = 0;
+
+        CELLVALUE commands[2] = {MOVE_LEFT_KEY, MOVE_DOWN_KEY};
+
+        for (int j = 0; j < 2; j++)
+            world[bpos+BOT_PROGRAM+j] = world[world[pos+commands[j]]];
+    }
+}
 /**
  * Inits the world with random placements for each cell type, and
  * fills in the inital values.
@@ -380,7 +417,8 @@ void init_world(int world_size, int world_win_max_y, int world_win_max_x, CELLVA
     for (int k = 0; k < INHABITED_CELLS; k++)
         world[positions[POSITIONS]+k] = positions[k];
 
-    init_bots(world_size, positions[POSITIONS], world);
+    //init_bots(world_size, positions[POSITIONS], world);
+    init_test_bots(world_size, positions[POSITIONS], world);
     world[POS_POS] = positions[POSITIONS];
     world[MAX_X] = world_win_max_x;
     world[MAX_Y] = world_win_max_y;
