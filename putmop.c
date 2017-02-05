@@ -350,8 +350,7 @@ void init_world(int world_size, int world_win_max_y, int world_win_max_x, CELLVA
     int *sizes = malloc(sizeof(int) * INHABITED_CELLS);
     int *order = get_randomized_cell_types_order();
 
-    //CELLVALUE *init_values = malloc(sizeof(CELLVALUE)*INHABITED_CELLS);
-    CELLVALUE *init_values = calloc(INHABITED_CELLS, sizeof(CELLVALUE));
+    CELLVALUE *init_values = malloc(sizeof(CELLVALUE)*INHABITED_CELLS);
 
     make_inits_values(init_values, sizes);
 
@@ -517,7 +516,7 @@ int main()
     CELLVALUE world_max_x = world_win_max_x - 2;
     
     int world_size = world_max_y*world_max_x;
-    CELLVALUE world[world_size];
+    CELLVALUE *world = malloc(sizeof(CELLVALUE) * world_size);;
     init_world(world_size, world_max_y, world_max_x, world);
 
     WINDOW *map_win = newwin(world_win_max_y, world_win_max_x, 0, 0);
