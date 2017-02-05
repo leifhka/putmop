@@ -3,63 +3,68 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define POS_POS 0
-#define MAX_X 1
-#define MAX_Y 2
-
-#define NUM_META_DATA 3
-
 /* Number of cells in player 'memory' (bottom bar cells) */
 #define MAX_PLAYER_CELLS 10
 
+enum {
+    POS_POS = 0,
+    MAX_Y,
+    MAX_X,
+    NUM_META_DATA
+};
+
+
 /* Cell types with random location
  * Number is used to denote it in position array */
-#define MOVE_LEFT_KEY 0
-#define MOVE_RIGHT_KEY 1
-#define MOVE_UP_KEY 2
-#define MOVE_DOWN_KEY 3
-#define PUT_VAL_KEY 4
-#define PUT_CELL_POINTER_KEY 5
-#define UPDATE_CELL_KEY 6
-#define INCREMENT_KEY 7
-#define DECREMENT_KEY 8
-#define TEST_EQ_KEY 9
-#define TEST_L_KEY 10
-#define TEST_G_KEY 11
-#define PUT_CELL_VAL_KEY 12
-#define PUT_FROM_CELL_KEY 13
-#define IF_TEST_KEY 14
-#define ELSE_TEST_KEY 15
-#define IF_END_KEY 16
-#define BOT_PROGRAM_END 17
-#define PLAYER_POS 18
-#define PLAYER_POS_PTR 19
-#define PLAYER_CELLS 20
-#define PLAYER_VALUE 21
-#define WORLD_SIZE 22
-#define MOVE_LENGTH 23
-#define WIN_FLAG 24
-#define RESTART_GAME 25
-#define SEED 26
-#define IS_POINTER 27
-#define POSITIONS 28
-#define PLAYER_SYMBOL 29
-#define BOTS 30
+enum {
+    MOVE_LEFT_KEY = 0,
+    MOVE_RIGHT_KEY,
+    MOVE_UP_KEY,
+    MOVE_DOWN_KEY,
+    PUT_VAL_KEY,
+    PUT_CELL_POINTER_KEY,
+    UPDATE_CELL_KEY,
+    INCREMENT_KEY,
+    DECREMENT_KEY,
+    TEST_EQ_KEY,
+    TEST_L_KEY,
+    TEST_G_KEY,
+    PUT_CELL_VAL_KEY,
+    PUT_FROM_CELL_KEY,
+    IF_TEST_KEY,
+    ELSE_TEST_KEY,
+    IF_END_KEY,
+    BOT_PROGRAM_END,
+    PLAYER_POS,
+    PLAYER_POS_PTR,
+    PLAYER_CELLS,
+    PLAYER_VALUE,
+    WORLD_SIZE,
+    MOVE_LENGTH,
+    WIN_FLAG,
+    RESTART_GAME,
+    SEED,
+    IS_POINTER,
+    POSITIONS,
+    PLAYER_SYMBOL,
+    BOTS
+};
 
-/* Number of inhabited cells, that is, number of cell types */
 #define INHABITED_CELLS (30 + NUMBER_OF_BOTS)
 
 /* Bot specific constants */
 #define NUMBER_OF_BOTS 5
 #define PROGRAM_INIT_SIZE 5
 #define NUMBER_OF_BOT_COMMANDS 16
-#define BOT_POS 0
-#define BOT_CELL_VAL 1
-#define BOT_FLAG_VAL 2
-#define BOT_BOOL 3
-#define BOT_PROGRAM_COUNTER 4
-#define BOT_PROGRAM 5
-#define BOT_SIZE 6
+enum {
+    BOT_POS = 0,
+    BOT_CELL_VAL,
+    BOT_FLAG_VAL,
+    BOT_BOOL,
+    BOT_PROGRAM_COUNTER,
+    BOT_PROGRAM,
+    BOT_SIZE
+};
 /* Bot defaults to userinput 0 for all commands needing an input value */
 
 /* Type for cells in world. Must be large enough to contain a normal C-pointer. */
@@ -540,5 +545,6 @@ int main()
     }
 
     endwin();
+    free(world);
     return 0;
 }
