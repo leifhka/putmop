@@ -50,7 +50,7 @@ enum {
     BOTS
 };
 
-#define INHABITED_CELLS (30 + NUMBER_OF_BOTS)
+#define INHABITED_CELLS (1 + BOTS + NUMBER_OF_BOTS)
 
 /* Bot specific constants */
 #define NUMBER_OF_BOTS 5
