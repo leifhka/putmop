@@ -50,10 +50,10 @@ enum {
     BOTS
 };
 
-#define INHABITED_CELLS (1 + BOTS + NUMBER_OF_BOTS)
+#define INHABITED_CELLS (BOTS + NUMBER_OF_BOTS)
 
 /* Bot specific constants */
-#define NUMBER_OF_BOTS 5
+#define NUMBER_OF_BOTS 1
 #define PROGRAM_INIT_SIZE 5
 #define NUMBER_OF_BOT_COMMANDS 16
 enum {
@@ -155,10 +155,10 @@ void execute_bot_step(int i, CELLVALUE *world)
         else
             world[world[bpos + BOT_CELL_VAL]] = world[bpos + BOT_POS];
     } else if (com == world[world[world[POS_POS] + IF_TEST_KEY]]) {
-        if (!world[world[bpos + BOT_BOOL]])
+        if (!world[bpos + BOT_BOOL])
             skip_bot_if(bpos, world);
     } else if (com == world[world[world[POS_POS] + ELSE_TEST_KEY]]) {
-        if (world[world[bpos + BOT_BOOL]])
+        if (world[bpos + BOT_BOOL])
             skip_bot_if(bpos, world);
     } else if (com == world[world[world[POS_POS] + BOT_PROGRAM_END]]) {
         world[bpos + BOT_PROGRAM_COUNTER] = -1;
@@ -179,10 +179,13 @@ void skip_bot_if(int bpos, CELLVALUE *world)
 {
     int c = bpos + BOT_PROGRAM + world[bpos+BOT_PROGRAM_COUNTER];
 
-    while (world[c] != BOT_PROGRAM_END &&
-           world[c] != ELSE_TEST_KEY && 
-           world[c] != IF_END_KEY)
+    while (world[c] != world[world[world[POS_POS] + BOT_PROGRAM_END]] &&
+           world[c] != world[world[world[POS_POS] + ELSE_TEST_KEY]] && 
+           world[c] != world[world[world[POS_POS] + IF_END_KEY]]) {
+
         world[bpos + BOT_PROGRAM_COUNTER]++;
+        c = bpos + BOT_PROGRAM + world[bpos+BOT_PROGRAM_COUNTER];
+    }
 }
 
 void eval_input(char ch, CELLVALUE *world)
@@ -263,6 +266,7 @@ void make_inits_values(CELLVALUE *init_values, int *sizes) {
     init_values[UPDATE_CELL_KEY] = 'e';
     init_values[IF_TEST_KEY] = '?';
     init_values[ELSE_TEST_KEY] = ':';
+    init_values[IF_END_KEY] = ')';
     init_values[WIN_FLAG] = 1;
     init_values[PLAYER_SYMBOL] = '@';
     init_values[BOT_PROGRAM_END] = 0;
@@ -337,8 +341,9 @@ void init_test_bots(int world_size, int pos, CELLVALUE *world)
         int bpos = world[pos+BOTS+i];
         world[bpos+BOT_POS] = 50;
         world[bpos+BOT_PROGRAM_COUNTER] = 0;
+        world[bpos+BOT_BOOL] = 1;
 
-        CELLVALUE commands[PROGRAM_INIT_SIZE] = {MOVE_LEFT_KEY, MOVE_DOWN_KEY, 0, 0, 0};
+        CELLVALUE commands[PROGRAM_INIT_SIZE] = {MOVE_DOWN_KEY, IF_TEST_KEY, MOVE_LEFT_KEY, IF_END_KEY, BOT_PROGRAM_END};
 
         for (int j = 0; j < PROGRAM_INIT_SIZE; j++)
             world[bpos+BOT_PROGRAM+j] = world[world[pos+commands[j]]];
@@ -425,10 +430,10 @@ void draw_map(WINDOW *win, CELLVALUE *world, int world_size)
     }
 
     for (i = 0; i < NUMBER_OF_BOTS; i++) {
-        int bpos = world[world[world[0]+INHABITED_CELLS-i]+BOT_POS];
+        int bpos = world[world[world[POS_POS]+BOTS+i]+BOT_POS];
         int by = bpos / (col-2);
         int bx = bpos - (by*(col-2));
-        mvwaddch(win, 1+by, 1+bx, world[world[world[0]+PLAYER_SYMBOL]]);
+        mvwaddch(win, 1+by, 1+bx, world[world[world[POS_POS]+PLAYER_SYMBOL]]);
     }
 
     box(win, 0, 0);
