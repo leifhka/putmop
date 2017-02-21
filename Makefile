@@ -1,6 +1,6 @@
 
 compile:
-	gcc -Wall -o putmop putmop.c -lcurses
+	gcc -std=c99 -Wall -o putmop putmop.c -lcurses
 run: 
 	./putmop
 
